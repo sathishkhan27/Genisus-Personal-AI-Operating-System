@@ -16,6 +16,10 @@
 
 [Key Features](#-key-features) • [Live Demos & Snippets](#-live-demos--code-snippets) • [System Architecture](#-system-architecture) • [Getting Started](#-getting-started) • [Subsystems](#-core-subsystems) • [API Reference](#-api--bridge-reference)
 
+<br/>
+
+<img src="docs/images/genisus-sample.png" alt="GENISUS Personal AI Operating System Interface" width="100%" />
+
 </div>
 
 ---
@@ -67,6 +71,173 @@ Whether running local code generation cycles, monitoring live PostgreSQL databas
 - **🧩 Tools, MCP Gateway & Skills Marketplace**
   - Model Context Protocol (MCP) tool routing and dynamic schema discovery.
   - Built-in directory of 18+ agentic capabilities and 16+ installable specialist agents.
+
+---
+
+## 💻 Live Demos & Code Snippets
+
+### 1. 🖥️ Interactive Command Cockpit HUD
+When initialized, GENISUS boots into an ambient cybernetic cockpit with live diagnostics:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│  [◉] ARC REACTOR: OPTIMAL  │  GPT-6 ASTRA: [MODE B: ASSISTED ▼]  │  AI MODEL: ACTIVE  │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│  CHRONOMETER: Monday, 15 Jun 2026 · 11:18:21 UTC+5:30   VOICE: [● ACTIVE - தமிழ்/EN]   │
+├─────────────────────────┬──────────────────────────────────┬───────────────────────────┤
+│ TELEMETRY GAUGES        │ 3D HOLOGRAPHIC CORE VIEWPORT     │ ACTIVE DIRECTIVE CONSOLE  │
+│  CPU:  [██░░░░░░░░] 15% │        .---'''-.                 │ Commander: "Run full unit │
+│  RAM:  [█████░░░░░] 54% │       /   / \   \   (Rotating    │ tests on seller service"  │
+│  DISK: [████░░░░░░] 40% │      |   | O |   |   Arc Core)   │ Astra: "Executing 7-stage │
+├─────────────────────────┤       \   \ /   /                │ pipeline in Mode B..."    │
+│ STARK PROTOCOLS         │        '---...-'                 │ Status: [STAGE 5: GREEN]  │
+│  [⚡ HOUSE PARTY]       ├──────────────────────────────────┴───────────────────────────┤
+│  [🎯 TACTICAL VERONICA] │ REAL-TIME GIT INTEGRATION: pingzo-seller-portal (branch: main)│
+│  [🧹 CLEAN SLATE]       │ Last Commit: [8f2a1b0] feat(auth): add keycloak token verify │
+└─────────────────────────┴──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 2. ⚡ Autonomous 7-Stage Developer Pipeline (`astra_dev_agent.py`)
+Run the autonomous developer engine from your terminal or trigger it directly through the HUD. The pipeline analyses requirements, inspects ASTs, writes code, validates tests, self-heals any failures, and commits:
+
+```bash
+# Execute autonomous verification and pipeline development
+python3 python/astra_dev_agent.py \
+  --project . \
+  --requirement "Add real-time telemetry health ping utility" \
+  --mode MODE_B_ASSISTED
+```
+
+**Real-Time Terminal Execution Output:**
+```text
+[STAGE 1] ▶ Requirement Analysis & Astra Planning -> IN_PROGRESS
+[STAGE 1] ✓ Requirement Analysis & Astra Planning -> SUCCESS
+          ├── Intent: FEATURE_ENHANCEMENT
+          ├── Risk Level: LOW
+          └── Plan: 7 sub-steps generated
+[STAGE 2] ▶ Repository & Dependency Inspection -> IN_PROGRESS
+[STAGE 2] ✓ Repository & Dependency Inspection -> SUCCESS
+          └── Detected: Node.js/Vite project (Git branch: main)
+[STAGE 3] ▶ Impact Analysis & Safety Evaluation -> IN_PROGRESS
+[STAGE 3] ✓ Impact Analysis & Safety Evaluation -> SUCCESS
+          └── Authorization: GATED_ASSISTED (Human-in-the-loop push approval)
+[STAGE 4] ▶ Autonomous Code Synthesis -> IN_PROGRESS
+[STAGE 4] ✓ Autonomous Code Synthesis -> SUCCESS
+          └── Modified: src/modules/automation/livePipeline_add_real_time_telemetry_ping_u.js
+[STAGE 5] ▶ Automated Build & Test Suite -> IN_PROGRESS
+[STAGE 5] ✓ Automated Build & Test Suite -> SUCCESS (All 12 tests passed)
+[STAGE 6] ▶ Git Staging & Semantic Commit -> IN_PROGRESS
+[STAGE 6] ✓ Git Staging & Semantic Commit -> SUCCESS
+          └── Created commit [a7c390e]: "feat(autonomous): add real-time telemetry health ping"
+[STAGE 7] ℹ Push Gated: Awaiting operator confirmation (Mode B: Assisted)
+
+============================================================
+GENISUS AI DEVELOPER PIPELINE EXECUTION COMPLETE
+Total Duration: 2.45s
+Commit: a7c390e
+Status: READY_FOR_DEPLOYMENT
+============================================================
+```
+
+---
+
+### 3. 🎙️ Bilingual Voice Command & Reasoning (தமிழ் & English)
+GENISUS recognizes seamless conversational directives across languages, automatically resolving intent, tone, and execution route:
+
+#### Example A: Voice Directive in தமிழ் (Tamil)
+```text
+Operator: "ஜெனிசிஸ், தற்போதைய கிளவுட் டேட்டாபேஸ் நிலையை சரிபார்"
+(GENISUS, check current cloud database status)
+
+GENISUS Voice Synth:
+"கட்டளை பெறப்பட்டது, தளபதி சதீஷ். Neon Cloud Serverless PostgreSQL 
+நெட்வொர்க்கை சோதிக்கிறேன்... pingzo-db மற்றும் booknowgo தரவுத்தளங்கள் 
+100% ஆரோக்கியத்துடன் இயங்குகின்றன."
+```
+
+#### Example B: Developer Directive in English
+```text
+Operator: "GENISUS, run tactical diagnostics and summarize dirty files."
+
+GENISUS HUD Console:
+[INTENT_CLASSIFIED]: DEV_DIAGNOSTICS (Confidence: 0.98, Risk: LOW)
+[TACTICAL_VERONICA]: ACTIVE
+• Branch: main (origin/main)
+• Modified: 1 file (README.md)
+• Memory Buffers: 54% RAM utilized
+• Background Daemons: 1 active worker
+```
+
+---
+
+### 4. 🔄 Background Task Daemon (`llm_task_agent.py`)
+Enqueue asynchronous objectives into the persistent atomic queue and let the background worker manage execution state:
+
+```bash
+# 1. Enqueue a new autonomous task
+python3 python/llm_task_agent.py \
+  --create-task "Analyze and harden governance risk evaluation rules" \
+  --priority HIGH \
+  --category GOVERNANCE
+
+# Output:
+# [TaskStateStore] Created Task: task-17482910 ("Analyze and harden governance risk...")
+# Decomposed into 3 sequential activities.
+
+# 2. Check engine status and queue health
+python3 python/llm_task_agent.py --status
+
+# Output:
+# === GENISUS Python LLM Task Agent v4.0.0-BackgroundEngine ===
+# Status: OPERATIONAL | Total: 11 | Active: 1 | Completed: 10
+# Pending Activities: 3 | In Progress: 0
+
+# 3. Step through next activity programmatically
+python3 python/llm_task_agent.py --step
+```
+
+---
+
+### 5. 🌐 OS & Git Bridge REST API (cURL)
+Interact directly with the local development bridge from any terminal or script:
+
+#### Query Local Repository Status
+```bash
+curl -s http://localhost:5173/api/dev/git-status?project=. | jq .
+```
+```json
+{
+  "project": "/Users/sathish.s/Documents/GitHub/personal_repo/Genisus-Personal-AI-Operating-System",
+  "branch": "main",
+  "isGit": true,
+  "dirtyFiles": 1,
+  "files": [
+    { "code": "M", "path": "README.md", "staged": false }
+  ],
+  "lastCommit": {
+    "sha": "e01c670",
+    "message": "initial commit",
+    "author": "sathish.s"
+  }
+}
+```
+
+#### Enqueue an Autonomous Task via REST
+```bash
+curl -X POST http://localhost:5173/api/agent/enqueue \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Run security scan on API gateway", "priority": "HIGH"}'
+```
+```json
+{
+  "success": true,
+  "taskId": "task-829104",
+  "status": "QUEUED",
+  "queuePosition": 1
+}
+```
 
 ---
 
