@@ -14,7 +14,7 @@
 **A Sci-Fi Inspired, Multi-Agent Autonomous Command Cockpit & Private AI Operating System.**  
 *Powered by GPT-6 Astra Reasoning, Real-Time Git Bridges, Multi-Lingual Speech Engine, and Enterprise AI Governance.*
 
-[Key Features](#-key-features) • [System Architecture](#-system-architecture) • [Getting Started](#-getting-started) • [Subsystems](#-core-subsystems) • [API Reference](#-api--bridge-reference) • [Stark Protocols](#-stark-protocols)
+[Key Features](#-key-features) • [Live Demos & Snippets](#-live-demos--code-snippets) • [System Architecture](#-system-architecture) • [Getting Started](#-getting-started) • [Subsystems](#-core-subsystems) • [API Reference](#-api--bridge-reference)
 
 </div>
 
