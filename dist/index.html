@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GENISUS — Private AI Command Center</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50 5, 95 27, 95 73, 50 95, 5 73, 5 27' fill='none' stroke='%2300f0ff' stroke-width='6'/><circle cx='50' cy='50' r='18' fill='%2300f0ff'/></svg>">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <script type="module" crossorigin src="/assets/index-C-8MzNiQ.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-D7yk379k.css">
+</head>
+<body>
+  <!-- Ambient Sci-Fi CRT Overlays -->
+  <div class="hud-scanlines"></div>
+  <div class="hud-vignette"></div>
+
+  <div id="app-container" class="command-center-container">
+    <!-- Top HUD Header Bar -->
+    <header class="hud-header">
+      <!-- Left: Arc Reactor Logo & System Status -->
+      <div class="brand-section">
+        <div class="arc-reactor-badge" id="arc-reactor-logo" title="GENISUS Arc Reactor Core">
+          <div class="arc-ring"></div>
+          <div class="arc-core"></div>
+        </div>
+        <div>
+          <div class="brand-title-row">
+            <h1 class="brand-title">GENISUS</h1>
+            <span class="brand-subtitle-tag">COMMAND CENTER</span>
+          </div>
+          <div class="brand-version">PERSONAL AI OPERATING SYSTEM · v3.0.0</div>
+        </div>
+        <div class="system-status-pill" id="system-status-badge">
+          <span class="status-dot"></span>
+          <span>SYSTEM: <strong>OPTIMAL</strong></span>
+        </div>
+        <div class="system-status-pill astra-core-pill" id="astra-core-badge" style="border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.1);">
+          <span class="status-dot" style="background: var(--violet); box-shadow: 0 0 8px var(--violet);"></span>
+          <span style="font-size: 11px;">GPT-6 ASTRA:</span>
+          <select id="astra-mode-select" class="lang-selector" style="font-size: 10px; padding: 2px 4px; margin-left: 4px; background: rgba(0,0,0,0.5); border: 1px solid rgba(139, 92, 246, 0.5); color: #c084fc; border-radius: 4px;" title="Astra Autonomous Execution Mode">
+            <option value="MODE_B_ASSISTED" selected>Mode B: Assisted</option>
+            <option value="MODE_A_ADVISORY">Mode A: Advisory</option>
+            <option value="MODE_C_AUTONOMOUS">Mode C: Autonomous</option>
+          </select>
+        </div>
+        <div class="system-status-pill genisus-model-pill" id="genisus-model-badge" style="border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.1); cursor: pointer;" title="GENISUS AI Model: AI Developer + LLM Task Agent Core">
+          <span class="status-dot" style="background: #3b82f6; box-shadow: 0 0 8px #3b82f6;"></span>
+          <span style="font-size: 11px; color: #93c5fd; font-weight: 600;">AI MODEL:</span>
+          <span style="font-size: 10px; color: #60a5fa; margin-left: 4px; letter-spacing: 0.5px;">AI + LLM AGENTS [ACTIVE]</span>
+        </div>
+      </div>
+
+      <!-- Center: Glowing Digital Date & Time -->
+      <div class="header-center-chronometer">
+        <div class="header-date" id="system-date">Monday, 15 June 2026</div>
+        <div class="header-time" id="system-clock">11:18:21 AM UTC+5:30</div>
+      </div>
+
+      <!-- Right: Search, Utilities, Language & Commander Profile -->
+      <div class="header-right-actions">
+        <div class="hud-search-bar">
+          <i data-lucide="search" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+          <input type="text" id="quick-search-input" placeholder="Search directives, intel, agents (⌘K)..." autocomplete="off" />
+        </div>
+
+        <div class="telemetry-item lang-selector-container">
+          <select id="lang-select" class="lang-selector" title="Primary Voice Recognition Language">
+            <option value="ta-IN" selected>தமிழ் (Tamil)</option>
+            <option value="en-US">English (US)</option>
+            <option value="hi-IN">हिंदी (Hindi)</option>
+            <option value="te-IN">తెలుగు (Telugu)</option>
+            <option value="kn-IN">ಕನ್ನಡ (Kannada)</option>
+            <option value="ml-IN">മലയാളം (Malayalam)</option>
+          </select>
+        </div>
+
+        <!-- JARVIS Continuous Voice Toggle -->
+        <button class="jarvis-voice-toggle-btn active" id="jarvis-continuous-toggle" title="Toggle Continuous Listening Mode">
+          <span class="live-dot"></span>
+          <span id="jarvis-toggle-label">VOICE: ACTIVE</span>
+        </button>
+
+        <div class="operator-profile-pill">
+          <div class="operator-avatar">S</div>
+          <div class="operator-meta">
+            <span class="operator-role">Operator</span>
+            <span class="operator-name">Commander Sathish</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Cockpit Layout: 3-Column Zero-Overflow Fit-Screen Grid -->
+    <main class="hud-body-grid">
+      <!-- COLUMN 1: Left Navigation & Diagnostics Rail (220px) -->
+      <aside class="hud-sidebar">
+        <nav class="sidebar-nav">
+          <button class="sidebar-nav-btn active" data-mode="command-center" id="nav-command">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Command Center</span>
+          </button>
+          <button class="sidebar-nav-btn" data-mode="developer" id="nav-developer">
+            <i data-lucide="code-2"></i>
+            <span>AI Developer</span>
+            <span class="sidebar-badge cyan">AGY</span>
+          </button>
+          <button class="sidebar-nav-btn" data-mode="governance" id="nav-governance">
+            <i data-lucide="shield-check"></i>
+            <span>Governance &amp; AI</span>
+            <span class="sidebar-badge red">GOV</span>
+          </button>
+          <button class="sidebar-nav-btn" data-mode="planner" id="nav-planner">
+            <i data-lucide="compass"></i>
+            <span>Task Planner</span>
+            <span class="sidebar-badge violet">ASTRA</span>
+          </button>
+          <button class="sidebar-nav-btn" data-mode="marketplace" id="nav-marketplace">
+            <i data-lucide="store"></i>
+            <span>Marketplace</span>
+            <span class="sidebar-badge emerald">16</span>
+          </button>
+          <button class="sidebar-nav-btn" data-mode="tasks" id="nav-tasks">
+            <i data-lucide="check-square"></i>
+            <span>Tasks</span>
+            <span class="sidebar-badge amber">3</span>
+          </button>
+          <button class="sidebar-nav-btn" data-mode="calendar" id="nav-calendar">
+            <i data-lucide="calendar"></i>
+            <span>Calendar</span>
+          </button>
+          <button class="sidebar-nav-btn" data-mode="memory" id="nav-memory">
+            <i data-lucide="database"></i>
+            <span>Memory &amp; RAG</span>
+          </button>
+          <button class="sidebar-nav-btn" data-mode="tools" id="nav-tools">
+            <i data-lucide="wrench"></i>
+            <span>Tools &amp; Skills</span>
+            <span class="sidebar-badge emerald">18</span>
+          </button>
+          <button class="sidebar-nav-btn" data-mode="media" id="nav-media">
+            <i data-lucide="phone-call"></i>
+            <span>தொலைபேசி (Calls)</span>
+          </button>
+        </nav>
+
+        <!-- Stark Protocols Control Deck -->
+        <div class="sidebar-protocols-card">
+          <div class="sidebar-card-header">
+            <span class="card-title-sm"><i data-lucide="shield-alert"></i> STARK PROTOCOLS</span>
+            <span class="live-pill red">ONLINE</span>
+          </div>
+          <div class="protocol-btn-stack">
+            <button class="protocol-btn house-party" id="btn-house-party" title="Deploy All Autonomous Agents Concurrently">
+              <i data-lucide="zap"></i>
+              <div class="btn-text-block">
+                <span class="btn-title">HOUSE PARTY</span>
+                <span class="btn-sub">Swarm All 6 Agents</span>
+              </div>
+            </button>
+            <button class="protocol-btn tactical" id="btn-tactical-mode" title="Toggle Veronica Combat Diagnostic Telemetry">
+              <i data-lucide="crosshair"></i>
+              <div class="btn-text-block">
+                <span class="btn-title">TACTICAL VERONICA</span>
+                <span class="btn-sub">Combat Diagnostics</span>
+              </div>
+            </button>
+            <button class="protocol-btn clean-slate" id="btn-clean-slate" title="Purge Ephemeral Memory Buffers">
+              <i data-lucide="trash-2"></i>
+              <div class="btn-text-block">
+                <span class="btn-title">CLEAN SLATE</span>
+                <span class="btn-sub">Purge Cache &amp; Reset</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Radial Gauges (CPU, RAM, DISK) -->
+        <div class="sidebar-gauges-card">
+          <div class="sidebar-card-header">
+            <span class="card-title-sm"><i data-lucide="gauge"></i> TELEMETRY</span>
+            <span class="live-pill green">OPTIMAL</span>
+          </div>
+          <div class="mini-donuts-row">
+            <div class="mini-donut-item">
+              <svg class="donut-svg-sm" viewBox="0 0 50 50">
+                <circle class="donut-bg" cx="25" cy="25" r="20"></circle>
+                <circle class="donut-fill cpu-fill" cx="25" cy="25" r="20" stroke-dasharray="125" stroke-dashoffset="106"></circle>
+              </svg>
+              <div class="donut-val-center">
+                <span class="donut-num" id="gauge-cpu-val">15%</span>
+                <span class="donut-sub">CPU</span>
+              </div>
+            </div>
+            <div class="mini-donut-item">
+              <svg class="donut-svg-sm" viewBox="0 0 50 50">
+                <circle class="donut-bg" cx="25" cy="25" r="20"></circle>
+                <circle class="donut-fill ram-fill" cx="25" cy="25" r="20" stroke-dasharray="125" stroke-dashoffset="57"></circle>
+              </svg>
+              <div class="donut-val-center">
+                <span class="donut-num" id="gauge-ram-val">54%</span>
+                <span class="donut-sub">RAM</span>
+              </div>
+            </div>
+            <div class="mini-donut-item">
+              <svg class="donut-svg-sm" viewBox="0 0 50 50">
+                <circle class="donut-bg" cx="25" cy="25" r="20"></circle>
+                <circle class="donut-fill disk-fill" cx="25" cy="25" r="20" stroke-dasharray="125" stroke-dashoffset="75"></circle>
+              </svg>
+              <div class="donut-val-center">
+                <span class="donut-num" id="gauge-disk-val">40%</span>
+                <span class="donut-sub">DISK</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- COLUMN 2: Central Command Stage (Hologram Core on Top + Chat Console on Bottom) -->
+      <section class="hud-center-stage-column">
+        <!-- Upper Stage: 3D Holographic AI Core with Arc Reactor -->
+        <div class="hud-card hologram-viewport-card">
+          <div class="hologram-overlay-header">
+            <div class="hologram-title-group">
+              <span class="core-brand-badge">GENISUS AI CORE</span>
+              <span class="core-version-badge">MARK VII · v3.5</span>
+            </div>
+            <div class="hologram-telemetry-tags">
+              <span class="holo-tag"><i data-lucide="bot"></i> 6 Agents Active</span>
+              <span class="holo-tag"><i data-lucide="database"></i> 3,380 Vectors</span>
+              <span class="holo-tag emerald"><i data-lucide="activity"></i> 14ms Latency</span>
+            </div>
+          </div>
+
+          <!-- WebGL Canvas for 3D Hologram, Arc Reactor & Mark Concentric Reticles -->
+          <div class="canvas-3d-wrapper">
+            <canvas id="three-core-canvas"></canvas>
+          </div>
+
+          <!-- Floating Live Voice Recognition Pill -->
+          <div class="live-voice-floating-capsule" id="live-voice-box">
+            <div class="capsule-pulse-indicator">
+              <span class="pulse-beacon" id="voice-dot"></span>
+              <span id="voice-recognition-headline">VOICE RECOGNITION: ACTIVE (CLICK TO TALK)</span>
+            </div>
+            <div class="live-voice-transcript" id="live-voice-transcript">
+              Speak with GENISUS: "What are my priorities today?" or "இன்றைய வேலைகள் என்ன?"
+            </div>
+          </div>
+
+          <!-- Audio Waveform Visualizer (Contained cleanly at bottom of 3D stage) -->
+          <div class="audio-spectrum-canvas-wrap">
+            <canvas id="audio-waveform-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Lower Stage: Conversational Intelligence Console & Execution Card -->
+        <div class="hud-card dialog-feed-card" id="dialog-feed-card">
+          <div class="card-header">
+            <div class="card-title" id="active-agent-banner">
+              <i data-lucide="terminal"></i> GENISUS CONVERSATIONAL CONSOLE
+            </div>
+            <div class="agent-orchestration-route" id="orchestration-route">
+              <span class="route-step active">GENISUS</span>
+              <span class="route-arrow">▶</span>
+              <span class="route-step">ORCHESTRATOR</span>
+              <span class="route-arrow">▶</span>
+              <span class="route-step">STANDBY</span>
+            </div>
+          </div>
+
+          <!-- Live Transcript Area (Scrolls smoothly inside its box) -->
+          <div class="dialog-transcript-area" id="dialog-transcript">
+            <!-- Dynamic Messages inserted here -->
+          </div>
+
+          <!-- Multilingual Action Prompt Chips -->
+          <div class="quick-prompts" id="quick-prompts-bar">
+            <button class="prompt-chip" id="btn-open-llm-task" style="border-color: rgba(59,130,246,0.6); color: #93c5fd;">📋 LLM Tasks &amp; Activities</button>
+            <button class="prompt-chip" id="btn-open-writing-enhancer" style="border-color: rgba(168,85,247,0.6); color: #d8b4fe;">✍️ AI Writing Enhancer</button>
+            <button class="prompt-chip" data-prompt="Genisus, show JARVIS ecosystem architecture" style="border-color: rgba(6,182,212,0.6); color: #67e8f9;">🤖 JARVIS Ecosystem</button>
+            <button class="prompt-chip" data-prompt="Genisus, open developer dashboard">💻 Developer Dashboard</button>
+            <button class="prompt-chip" data-prompt="The product scanning page is too slow. Optimize it.">⚡ Optimize Scanner</button>
+            <button class="prompt-chip" data-prompt="Genisus, show me the changes">🔍 Show Diff</button>
+            <button class="prompt-chip" data-prompt="Genisus, run the tests">🧪 Run Tests</button>
+            <button class="prompt-chip" data-prompt="Genisus, fix the login API issue">🔑 Fix Login API</button>
+            <button class="prompt-chip" data-prompt="Genisus, check my GitHub repositories at sathishkhan27">🛠️ என் Repositories</button>
+            <button class="prompt-chip" data-prompt="இன்றைய வேலைகள் என்ன?">🎯 இன்றைய வேலைகள்</button>
+            <button class="prompt-chip" data-prompt="House Party Protocol">⚡ ஹவுஸ் பார்ட்டி (House Party)</button>
+            <button class="prompt-chip" data-prompt="Tactical Diagnostic Mode">🛡️ தற்காப்பு (Tactical)</button>
+          </div>
+        </div>
+
+        <!-- Dedicated Developer Command Center (Active in Developer Mode) -->
+        <div class="hud-card dev-command-center-card" id="dev-command-card" style="display: none;">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="terminal"></i> GENISUS AI DEVELOPER COMMAND CENTER
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select id="dev-project-select" class="lang-selector" style="font-size: 11.5px; padding: 4px 8px;" title="Target Repository">
+                <option value="genisus-os" selected>GENISUS AI Operating System</option>
+                <option value="shreeja_ulagam">Shreeja Ulagam App (Flutter)</option>
+                <option value="booknowgo-frontend">BookNowGo Frontend (Next.js)</option>
+                <option value="booknowgo-backend">BookNowGo Backend (Node.js)</option>
+                <option value="native_webview">Native WebView (Android/Kotlin)</option>
+              </select>
+              <select id="dev-ide-select" class="lang-selector" style="font-size: 11.5px; padding: 4px 8px;" title="Choose IDE to Launch">
+                <option value="vscode" selected>VS Code</option>
+                <option value="android-studio">Android Studio</option>
+                <option value="xcode">Xcode</option>
+              </select>
+              <span class="badge-tag cyan" id="dev-branch-badge">main</span>
+            </div>
+          </div>
+
+          <div class="dev-card-body">
+            <!-- Active Task Summary Hero -->
+            <div class="dev-task-hero">
+              <div class="dev-task-left">
+                <div class="dev-task-label">ACTIVE TASK</div>
+                <div class="dev-task-title" id="dev-task-title">Improve product scanning performance and add local image cache</div>
+                <div class="dev-task-meta" id="dev-task-meta">Module: Scanner &amp; OCR Subsystem · Risk: LOW · 3 Files Modified</div>
+              </div>
+              <div class="dev-task-status-pill" id="dev-status-pill">
+                <span class="pulse-beacon"></span>
+                <span id="dev-status-text">AWAITING CONFIRMATION</span>
+              </div>
+            </div>
+
+            <!-- 7-Stage Requirement to Code Pipeline Tracker -->
+            <div class="dev-pipeline-track">
+              <div class="dev-pipe-step completed" data-step="1"><span class="step-num">1</span> Req</div>
+              <div class="dev-pipe-arrow">▶</div>
+              <div class="dev-pipe-step completed" data-step="2"><span class="step-num">2</span> Analysis</div>
+              <div class="dev-pipe-arrow">▶</div>
+              <div class="dev-pipe-step completed" data-step="3"><span class="step-num">3</span> Impact</div>
+              <div class="dev-pipe-arrow">▶</div>
+              <div class="dev-pipe-step completed" data-step="4"><span class="step-num">4</span> Code</div>
+              <div class="dev-pipe-arrow">▶</div>
+              <div class="dev-pipe-step completed" data-step="5"><span class="step-num">5</span> Tests</div>
+              <div class="dev-pipe-arrow">▶</div>
+              <div class="dev-pipe-step active" data-step="6"><span class="step-num">6</span> Preview</div>
+              <div class="dev-pipe-arrow">▶</div>
+              <div class="dev-pipe-step" data-step="7"><span class="step-num">7</span> Push</div>
+            </div>
+
+            <!-- Stats & Changes Summary Grid -->
+            <div class="dev-stats-grid">
+              <div class="dev-stat-box">
+                <span class="dev-stat-val" id="dev-files-count">3</span>
+                <span class="dev-stat-lbl">FILES CHANGED</span>
+              </div>
+              <div class="dev-stat-box">
+                <span class="dev-stat-val" id="dev-tests-count">5 / 5</span>
+                <span class="dev-stat-lbl">TESTS PASSED</span>
+              </div>
+              <div class="dev-stat-box">
+                <span class="dev-stat-val" id="dev-risk-val" style="color: var(--emerald);">LOW</span>
+                <span class="dev-stat-lbl">DEPLOY RISK</span>
+              </div>
+              <div class="dev-stat-box">
+                <span class="dev-stat-val" id="dev-build-val" style="color: var(--cyan);">PASS</span>
+                <span class="dev-stat-lbl">BUILD STATUS</span>
+              </div>
+            </div>
+
+            <!-- Action Controls Toolbar -->
+            <div class="dev-actions-row">
+              <button class="btn-dev-action" id="btn-dev-open-ide" title="Open active project directly in your chosen desktop IDE">
+                <i data-lucide="external-link"></i> OPEN IN IDE
+              </button>
+              <button class="btn-dev-action" id="btn-dev-sync-git" title="Scan local working tree for real Git modifications">
+                <i data-lucide="refresh-cw"></i> SYNC GIT
+              </button>
+              <button class="btn-dev-action" id="btn-dev-view-diff">
+                <i data-lucide="file-diff"></i> VIEW DIFF
+              </button>
+              <button class="btn-dev-action" id="btn-dev-run-tests">
+                <i data-lucide="play"></i> RUN TESTS
+              </button>
+              <button class="btn-dev-action" id="btn-dev-arch-memory">
+                <i data-lucide="database"></i> ARCHITECTURE MEMORY
+              </button>
+              <button class="btn-dev-action primary" id="btn-dev-auto-pipeline" style="background: linear-gradient(135deg, rgba(239,68,68,0.3), rgba(168,85,247,0.35)); border-color: rgba(239,68,68,0.7); color: #fca5a5; font-weight: 700;" title="Run full real-time development, testing, commit and push loop">
+                <i data-lucide="zap"></i> ⚡ FULL AUTO-PILOT
+              </button>
+              <button class="btn-dev-action primary" id="btn-dev-approve-push">
+                <i data-lucide="git-pull-request"></i> APPROVE &amp; PUSH
+              </button>
+            </div>
+
+            <!-- Real-time Test / Build Output Console -->
+            <div class="dev-terminal-console" id="dev-terminal-output">
+              <div class="dev-term-line system">[GENISUS AI DEV AGENT] Standing by. Requirement-to-Code Pipeline active.</div>
+              <div class="dev-term-line success">✓ 5 automated unit and regression tests passed (0 failures, 14.2s compilation).</div>
+              <div class="dev-term-line info">ℹ Git Status: 3 files modified in feature/product-ai-scanner. Zero credentials or keys exposed.</div>
+              <div class="dev-term-line prompt">🛡️ Confirmation Gate active: Push held pending operator authorization.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dedicated Dynamic Task Planner Card (Active in Planner Mode) -->
+        <div class="hud-card dev-command-center-card" id="planner-command-card" style="display: none;">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="compass"></i> GPT-6 ASTRA DYNAMIC TASK PLANNER
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span class="badge-tag violet" id="planner-mode-badge">MID-TURN STEERING ACTIVE</span>
+              <span class="badge-tag cyan" id="planner-plan-id">PLAN-ASTRA-01</span>
+            </div>
+          </div>
+
+          <div class="dev-card-body" style="gap: 10px;">
+            <!-- Active Plan Hero -->
+            <div class="dev-task-hero">
+              <div class="dev-task-left">
+                <div class="dev-task-label">ACTIVE ROADMAP OBJECTIVE</div>
+                <div class="dev-task-title" id="planner-req-title">Research latest AI coding technologies, compare architectures, analyze career synergy, and generate actionable roadmap</div>
+                <div class="dev-task-meta" id="planner-req-meta">Domain: Career &amp; AI Engineering · Steerable Mid-Turn · 7 Planned Steps</div>
+              </div>
+              <div class="dev-task-status-pill" id="planner-status-pill">
+                <span class="pulse-beacon"></span>
+                <span id="planner-status-text">STEP 3 / 7 IN PROGRESS</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Steps Progression List -->
+            <div class="planner-steps-list" id="planner-steps-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; padding-right: 4px;">
+              <div class="planner-step-row completed">
+                <span class="step-badge-num">1</span>
+                <div class="step-info"><div class="step-title">Research AI coding technologies</div><div class="step-detail">Survey state-of-the-art coding models, agent swarms, and tools.</div></div>
+                <span class="step-status-tag done">DONE</span>
+              </div>
+              <div class="planner-step-row completed">
+                <span class="step-badge-num">2</span>
+                <div class="step-info"><div class="step-title">Retrieve current telemetry &amp; benchmarks</div><div class="step-detail">Query real-time benchmarks and verified developer ecosystem data.</div></div>
+                <span class="step-status-tag done">DONE</span>
+              </div>
+              <div class="planner-step-row active">
+                <span class="step-badge-num">3</span>
+                <div class="step-info"><div class="step-title">Compare architectural capabilities</div><div class="step-detail">Synthesize latency, accuracy, context window, and tool-use benchmarks.</div></div>
+                <span class="step-status-tag active">ACTIVE</span>
+              </div>
+              <div class="planner-step-row pending">
+                <span class="step-badge-num">4</span>
+                <div class="step-info"><div class="step-title">Analyze career relevance for Sathish</div><div class="step-detail">Evaluate synergy with Flutter, Dart, Node.js, and Cloud architectures.</div></div>
+                <span class="step-status-tag">PENDING</span>
+              </div>
+              <div class="planner-step-row pending">
+                <span class="step-badge-num">5</span>
+                <div class="step-info"><div class="step-title">Generate structured learning roadmap</div><div class="step-detail">Create phased progression milestones and practical project prompts.</div></div>
+                <span class="step-status-tag">PENDING</span>
+              </div>
+              <div class="planner-step-row pending">
+                <span class="step-badge-num">6</span>
+                <div class="step-info"><div class="step-title">Create prioritized action tasks</div><div class="step-detail">Map learning roadmap items into personal task manager.</div></div>
+                <span class="step-status-tag">PENDING</span>
+              </div>
+              <div class="planner-step-row pending">
+                <span class="step-badge-num">7</span>
+                <div class="step-info"><div class="step-title">Request authorization for external changes</div><div class="step-detail">Strict confirmation gate prior to syncing external calendars/repos.</div></div>
+                <span class="step-status-tag">GATE</span>
+              </div>
+            </div>
+
+            <!-- Mid-Turn Steering Toolbar (Section 3) -->
+            <div class="planner-steering-bar" style="background: rgba(0, 240, 255, 0.04); border: 1px dashed rgba(0, 240, 255, 0.3); border-radius: 6px; padding: 8px 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-family: var(--font-tech); font-size: 11px; font-weight: 700; color: var(--cyan);">
+                  ⚡ MID-TURN REQUIREMENT STEERING (No Restart Needed)
+                </span>
+                <span style="font-size: 10px; color: var(--text-muted);">Incorporate new constraints while execution continues</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="planner-steer-input" class="hud-text-input" placeholder="e.g. 'Also include Python' or 'Add security assessment'..." style="flex: 1;" />
+                <button class="btn-dev-action primary" id="btn-steer-incorporate">
+                  <i data-lucide="git-branch"></i> INCORPORATE
+                </button>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 6px;">
+                <button class="prompt-chip" data-steer="Also include Python">⚡ + Also include Python</button>
+                <button class="prompt-chip" data-steer="Also include Flutter BLoC">📱 + Also include Flutter BLoC</button>
+                <button class="prompt-chip" data-steer="Add Security Audit">🛡️ + Add Security Audit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dedicated Agent Marketplace & Evolution Card (Active in Marketplace Mode) -->
+        <div class="hud-card dev-command-center-card" id="marketplace-command-card" style="display: none;">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="store"></i> GENISUS AGENT MARKETPLACE &amp; GOVERNED EVOLUTION
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span class="badge-tag emerald">16 WORKERS REGISTERED</span>
+              <span class="badge-tag amber">SECTION 23 GOVERNED</span>
+            </div>
+          </div>
+
+          <div class="dev-card-body" style="gap: 10px; overflow-y: auto; max-height: 380px;">
+            <!-- Governed Self-Improvement Proposals Section -->
+            <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 6px; padding: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-family: var(--font-tech); font-size: 11.5px; font-weight: 700; color: #c084fc;">
+                  🧬 GENISUS GOVERNED EVOLUTION PROPOSALS
+                </span>
+                <span class="badge-tag violet">AWAITING APPROVAL</span>
+              </div>
+              <div id="evolution-proposals-container" style="display: flex; flex-direction: column; gap: 8px;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- 16 Active Agents Grid -->
+            <div>
+              <div style="font-family: var(--font-tech); font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">
+                ACTIVE SPECIALIZED AI WORKERS (16/16 HEALTHY)
+              </div>
+              <div class="agent-workers-grid" id="agent-workers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dedicated Enterprise AI Agent & Governance Command Center -->
+        <div class="hud-card dev-command-center-card" id="governance-command-card" style="display: none;">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="shield-check" class="red"></i> ENTERPRISE AI AGENT ORCHESTRATION &amp; GOVERNANCE PLATFORM
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span class="badge-tag red-pulse" id="gov-status-badge">ZERO-TRUST ACTIVE</span>
+              <span class="badge-tag cyan" id="gov-role-badge">ROLE: ADMIN</span>
+            </div>
+          </div>
+
+          <!-- Governance Sub-Navigation Tabs -->
+          <div class="gov-subnav-bar">
+            <button class="gov-tab-btn active" data-gov-tab="control-center"><i data-lucide="gauge"></i> Control Center</button>
+            <button class="gov-tab-btn" data-gov-tab="agent-builder"><i data-lucide="bot"></i> Agent Builder</button>
+            <button class="gov-tab-btn" data-gov-tab="workflows"><i data-lucide="git-merge"></i> Workflows</button>
+            <button class="gov-tab-btn" data-gov-tab="approvals"><i data-lucide="user-check"></i> Approvals <span class="tab-counter-pill red" id="gov-pending-counter">2</span></button>
+            <button class="gov-tab-btn" data-gov-tab="policies"><i data-lucide="sliders"></i> Policies</button>
+            <button class="gov-tab-btn" data-gov-tab="rag"><i data-lucide="book-open"></i> Governed RAG</button>
+            <button class="gov-tab-btn" data-gov-tab="audit"><i data-lucide="history"></i> Audit &amp; GRC</button>
+            <button class="gov-tab-btn" data-gov-tab="aas-skills"><i data-lucide="sparkles"></i> AAS Skills Feed <span class="tab-counter-pill cyan">2,122</span></button>
+          </div>
+
+          <div class="gov-card-body">
+            <!-- TAB 1: AI Control Center & Telemetry -->
+            <div class="gov-tab-panel active" id="gov-panel-control-center">
+              <div class="gov-kpi-grid">
+                <div class="gov-kpi-card">
+                  <div class="gov-kpi-label">TOTAL INVOCATIONS</div>
+                  <div class="gov-kpi-value cyan" id="kpi-total-invocations">1,420</div>
+                  <div class="gov-kpi-sub">98.5% Success Rate</div>
+                </div>
+                <div class="gov-kpi-card">
+                  <div class="gov-kpi-label">POLICY BLOCKS</div>
+                  <div class="gov-kpi-value red" id="kpi-policy-blocks">12</div>
+                  <div class="gov-kpi-sub">0.84% Guardrail Intercept</div>
+                </div>
+                <div class="gov-kpi-card">
+                  <div class="gov-kpi-label">HITL HALTED</div>
+                  <div class="gov-kpi-value amber" id="kpi-halted-approvals">14</div>
+                  <div class="gov-kpi-sub">Human Clearance Required</div>
+                </div>
+                <div class="gov-kpi-card">
+                  <div class="gov-kpi-label">TOKENS &amp; COST</div>
+                  <div class="gov-kpi-value emerald" id="kpi-token-cost">1.8M / $4.82</div>
+                  <div class="gov-kpi-sub">Avg Latency: 412ms</div>
+                </div>
+              </div>
+
+              <!-- Real-time Agent Fleet Status -->
+              <div class="gov-section-header">
+                <span><i data-lucide="activity"></i> ENTERPRISE AGENT EXECUTION TELEMETRY</span>
+                <button class="gov-action-btn small" id="btn-refresh-telemetry"><i data-lucide="refresh-cw"></i> Refresh</button>
+              </div>
+              <div class="gov-agent-telemetry-table-wrapper">
+                <table class="gov-table" id="gov-telemetry-table">
+                  <thead>
+                    <tr>
+                      <th>Agent</th>
+                      <th>Model Core</th>
+                      <th>Invocations</th>
+                      <th>Success</th>
+                      <th>Latency</th>
+                      <th>Tokens</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="gov-telemetry-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TAB 2: Agent Builder & Marketplace -->
+            <div class="gov-tab-panel" id="gov-panel-agent-builder">
+              <div class="gov-split-layout">
+                <!-- Creator Form -->
+                <div class="gov-form-container">
+                  <div class="gov-section-header">
+                    <span><i data-lucide="plus-circle"></i> CREATE ENTERPRISE AI AGENT</span>
+                  </div>
+                  <form id="gov-create-agent-form" class="gov-form">
+                    <div class="gov-form-row">
+                      <div class="gov-form-group flex-1">
+                        <label>Agent Name</label>
+                        <input type="text" id="agent-form-name" placeholder="e.g. API Security Auditor" required />
+                      </div>
+                      <div class="gov-form-group flex-1">
+                        <label>Base Model</label>
+                        <select id="agent-form-model">
+                          <option value="gpt-6-astra-omni" selected>GENISUS-Astra-Omni v6.2 (Recommended)</option>
+                          <option value="gpt-4o-mini">OpenAI GPT-4o Mini</option>
+                          <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet</option>
+                          <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="gov-form-group">
+                      <label>Purpose &amp; Objective</label>
+                      <input type="text" id="agent-form-purpose" placeholder="Core mission and business responsibility" required />
+                    </div>
+                    <div class="gov-form-group">
+                      <label>System Instructions / Policy Guardrails</label>
+                      <textarea id="agent-form-prompt" rows="3" placeholder="You are an enterprise agent. Strictly adhere to corporate compliance and never output unredacted PII..."></textarea>
+                    </div>
+                    <div class="gov-form-row">
+                      <div class="gov-form-group flex-1">
+                        <label>Risk Classification</label>
+                        <select id="agent-form-risk">
+                          <option value="LOW">LOW — Read-Only / Advisory</option>
+                          <option value="MEDIUM" selected>MEDIUM — Internal Systems</option>
+                          <option value="HIGH">HIGH — Production Access</option>
+                          <option value="CRITICAL">CRITICAL — Financial / Core DB</option>
+                        </select>
+                      </div>
+                      <div class="gov-form-group flex-1">
+                        <label>Human Approval</label>
+                        <select id="agent-form-approval">
+                          <option value="false">Autonomous (Within Guardrails)</option>
+                          <option value="true">Require Human Gate for Mutations</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="gov-form-group">
+                      <label>Connected Tools &amp; MCP Gateways</label>
+                      <div class="gov-tool-checkboxes">
+                        <label><input type="checkbox" value="tool-github" checked /> GitHub MCP</label>
+                        <label><input type="checkbox" value="tool-postgres" checked /> Postgres Gateway</label>
+                        <label><input type="checkbox" value="tool-slack" checked /> Slack Alerts</label>
+                        <label><input type="checkbox" value="tool-k8s" /> Kubernetes Deployer</label>
+                      </div>
+                    </div>
+                    <button type="submit" class="gov-btn-primary"><i data-lucide="shield-plus"></i> Deploy Governed Agent</button>
+                  </form>
+                </div>
+
+                <!-- Existing Governed Agents List -->
+                <div class="gov-agent-list-container">
+                  <div class="gov-section-header">
+                    <span><i data-lucide="cpu"></i> REGISTERED ENTERPRISE AGENTS</span>
+                    <span class="badge-tag emerald" id="gov-agent-count-badge">5 Active</span>
+                  </div>
+                  <div class="gov-agent-cards-grid" id="gov-registered-agents-grid">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: Multi-Agent Workflows -->
+            <div class="gov-tab-panel" id="gov-panel-workflows">
+              <div class="gov-section-header">
+                <span><i data-lucide="git-merge"></i> MULTI-AGENT DAG WORKFLOW ORCHESTRATION</span>
+                <span class="badge-tag cyan">HUMAN-GATED PIPELINES</span>
+              </div>
+              <div class="gov-workflow-cards-container" id="gov-workflows-container">
+                <!-- Populated dynamically -->
+              </div>
+              <div class="gov-workflow-live-console" id="gov-workflow-console" style="display: none;">
+                <div class="gov-console-header">
+                  <span><i data-lucide="terminal"></i> PIPELINE EXECUTION MONITOR</span>
+                  <span class="badge-tag amber" id="gov-workflow-live-status">RUNNING</span>
+                </div>
+                <div class="gov-console-steps" id="gov-workflow-steps-list">
+                  <!-- Steps populate live -->
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: Human-in-the-Loop Approvals -->
+            <div class="gov-tab-panel" id="gov-panel-approvals">
+              <div class="gov-section-header">
+                <span><i data-lucide="user-check"></i> PENDING HUMAN-IN-THE-LOOP APPROVAL DIRECTIVES</span>
+                <div style="display: flex; gap: 8px;">
+                  <button class="gov-action-btn small" id="btn-refresh-approvals"><i data-lucide="refresh-cw"></i> Refresh</button>
+                </div>
+              </div>
+              <div class="gov-approvals-list" id="gov-approvals-list">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- TAB 5: Policy Engine & Guardrails -->
+            <div class="gov-tab-panel" id="gov-panel-policies">
+              <div class="gov-section-header">
+                <span><i data-lucide="sliders"></i> ZERO-TRUST POLICY &amp; SAFETY GUARDRAILS MATRIX</span>
+                <span class="badge-tag red">LEAST PRIVILEGE</span>
+              </div>
+              <div class="gov-policy-grid" id="gov-policy-cards-grid">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- TAB 6: Governed RAG & Knowledge Base -->
+            <div class="gov-tab-panel" id="gov-panel-rag">
+              <div class="gov-split-layout">
+                <!-- RAG Query Tester -->
+                <div class="gov-form-container">
+                  <div class="gov-section-header">
+                    <span><i data-lucide="search"></i> ACL-GATED KNOWLEDGE RETRIEVAL TEST</span>
+                  </div>
+                  <div class="gov-rag-test-box">
+                    <div class="gov-form-group">
+                      <label>Security Clearance Role</label>
+                      <select id="gov-rag-role-select">
+                        <option value="admin" selected>Admin (Full Clearance)</option>
+                        <option value="finance">Finance (Financial Documents Only)</option>
+                        <option value="engineering">Engineering (CI/CD &amp; Code Architecture)</option>
+                        <option value="compliance">Compliance &amp; Legal (DPDP / GDPR)</option>
+                        <option value="public">Guest / Public (Public Docs Only)</option>
+                      </select>
+                    </div>
+                    <div class="gov-form-group">
+                      <label>Knowledge Search Query</label>
+                      <div style="display: flex; gap: 6px;">
+                        <input type="text" id="gov-rag-query-input" placeholder="e.g. payout limits or PII redaction" style="flex: 1;" />
+                        <button class="gov-btn-primary" id="btn-gov-rag-search" style="padding: 6px 14px;"><i data-lucide="search"></i> Query</button>
+                      </div>
+                    </div>
+                    <div class="gov-rag-results-box" id="gov-rag-results-container">
+                      <div style="color: var(--text-muted); font-size: 11px; padding: 12px; text-align: center;">
+                        Enter a query and role clearance to inspect ACL permission filtering and grounded citations.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Document Repository Overview -->
+                <div class="gov-agent-list-container">
+                  <div class="gov-section-header">
+                    <span><i data-lucide="file-text"></i> ENTERPRISE KNOWLEDGE SOURCES</span>
+                    <span class="badge-tag cyan">4 Corpus Verified</span>
+                  </div>
+                  <div class="gov-docs-list" id="gov-docs-list">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 7: Immutable Audit & GRC Risk Register -->
+            <div class="gov-tab-panel" id="gov-panel-audit">
+              <div class="gov-split-layout">
+                <!-- Audit Timeline -->
+                <div class="gov-audit-timeline-container">
+                  <div class="gov-section-header">
+                    <span><i data-lucide="shield-alert"></i> CRYPTOGRAPHICALLY CHAINED AUDIT LOG</span>
+                    <div style="display: flex; gap: 6px;">
+                      <button class="gov-action-btn small" id="btn-export-audit-json"><i data-lucide="download"></i> JSON</button>
+                      <button class="gov-action-btn small" id="btn-export-audit-csv"><i data-lucide="download"></i> CSV</button>
+                    </div>
+                  </div>
+                  <div class="gov-audit-logs-scroll" id="gov-audit-logs-container">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- GRC Risk Register & Compliance -->
+                <div class="gov-grc-container">
+                  <div class="gov-section-header">
+                    <span><i data-lucide="scale"></i> GRC RISK HEATMAP &amp; FRAMEWORKS</span>
+                    <span class="badge-tag emerald" id="gov-grc-score-badge">95% AVG COMPLIANCE</span>
+                  </div>
+                  <div class="gov-grc-content" id="gov-grc-container">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 8: Agentic Awesome Skills (AAS Core) Feed & Catalog -->
+            <div class="gov-tab-panel" id="gov-panel-aas-skills">
+              <div class="gov-section-header">
+                <span><i data-lucide="sparkles" class="cyan"></i> AGENTIC AWESOME SKILLS (AAS CORE) REPOSITORY FEED</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span class="badge-tag cyan">v17.3.0 · 2,122 SKILLS</span>
+                  <a href="https://github.com/sickn33/agentic-awesome-skills/tree/main" target="_blank" class="gov-action-btn small">
+                    <i data-lucide="github"></i> sickn33/agentic-awesome-skills
+                  </a>
+                </div>
+              </div>
+
+              <!-- AAS Search Bar & Filters -->
+              <div class="aas-search-bar" style="display: flex; gap: 10px; margin-bottom: 14px;">
+                <div style="flex: 1; position: relative;">
+                  <input type="text" id="aas-search-input" placeholder="Search 2,122+ skills (e.g. systematic-debugging, react-patterns, security, tdd)..." style="width: 100%; background: rgba(8, 14, 26, 0.85); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 6px; padding: 8px 12px; color: #fff; font-size: 12px;" />
+                </div>
+                <select id="aas-category-filter" style="background: rgba(8, 14, 26, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px; padding: 8px 12px; color: #fff; font-size: 11.5px;">
+                  <option value="ALL" selected>All Categories</option>
+                  <option value="Core Development &amp; Architecture">Core Dev &amp; Architecture</option>
+                  <option value="Security Engineering &amp; AppSec">Security &amp; AppSec</option>
+                  <option value="DevOps, Cloud &amp; Infrastructure">DevOps &amp; Cloud</option>
+                  <option value="Data Engineering &amp; Analytics">Data &amp; Analytics</option>
+                  <option value="AI / LLM Agents &amp; Evaluation Ops">AI Agents &amp; MCP</option>
+                  <option value="QA, Fuzzing &amp; Test Automation">QA &amp; Testing</option>
+                  <option value="SaaS Launch, Monetization &amp; Growth">SaaS &amp; Monetization</option>
+                </select>
+                <button class="gov-btn-primary" id="btn-aas-search" style="padding: 6px 16px;"><i data-lucide="search"></i> Find Skills</button>
+              </div>
+
+              <!-- AAS Catalog 3-Column Layout -->
+              <div class="gov-split-layout" style="grid-template-columns: 1.1fr 0.9fr;">
+                <!-- Left Column: Featured Skills & Playbooks -->
+                <div class="gov-form-container">
+                  <div class="gov-section-header">
+                    <span><i data-lucide="zap" class="amber"></i> HIGH-IMPACT SKILL PLAYBOOKS</span>
+                    <span class="badge-tag amber" id="aas-skills-count-badge">7 Loaded</span>
+                  </div>
+                  <div class="aas-skills-cards-list" id="aas-skills-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto;">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- Right Column: Specialized Plugins & Workflows -->
+                <div class="gov-agent-list-container">
+                  <!-- Specialized Plugins -->
+                  <div class="gov-section-header">
+                    <span><i data-lucide="package" class="emerald"></i> SPECIALIZED DOMAIN PLUGINS</span>
+                    <span class="badge-tag emerald">8 Domain Packs</span>
+                  </div>
+                  <div class="aas-plugins-grid" id="aas-plugins-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+                    <!-- Populated dynamically -->
+                  </div>
+
+                  <!-- Execution Workflows -->
+                  <div class="gov-section-header">
+                    <span><i data-lucide="git-branch" class="cyan"></i> AAS EXECUTION WORKFLOWS</span>
+                    <span class="badge-tag cyan">3 Workflows</span>
+                  </div>
+                  <div class="aas-workflows-list" id="aas-workflows-container" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUMN 3: GitHub Hub, Live Intel Feed & Swarm Monitor (350px) -->
+      <aside class="hud-right-deck">
+        <!-- 1. Connected GitHub Repositories (sathishkhan27) -->
+        <div class="hud-card github-repos-card">
+          <div class="card-header">
+            <div class="card-title"><i data-lucide="github"></i> REPOSITORIES (sathishkhan27)</div>
+            <span class="badge-tag cyan" id="repo-count-badge">LIVE API</span>
+          </div>
+          <div class="repos-scroll-list" id="repos-container">
+            <div class="repo-loading-indicator">
+              <span class="pulse-beacon"></span>
+              <span>Fetching live repositories from GitHub API...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Live Intelligence Feed -->
+        <div class="hud-card intel-feed-card">
+          <div class="card-header">
+            <div class="card-title"><i data-lucide="rss"></i> LIVE INTELLIGENCE FEED</div>
+            <span class="badge-tag red-pulse">LIVE STREAM</span>
+          </div>
+          <div class="intel-feed-list" id="intel-feed-list">
+            <div class="intel-feed-item">
+              <div class="feed-icon cyan"><i data-lucide="loader"></i></div>
+              <div class="feed-body">
+                <div class="feed-title">Connecting real-time telemetry stream...</div>
+                <div class="feed-meta"><span class="tag-pill cyan">Stream</span> Synchronizing GitHub &amp; Neon Cloud</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Active Swarm Agents Waveforms & Telemetry -->
+        <div class="hud-card active-swarm-card">
+          <div class="card-header">
+            <div class="card-title"><i data-lucide="bot"></i> MULTI-AGENT SWARM</div>
+            <span class="badge-tag emerald" id="active-agents-badge">6 ACTIVE</span>
+          </div>
+          <div class="swarm-mini-grid">
+            <div class="swarm-node active" id="swarm-node-coding">
+              <div class="node-head"><i data-lucide="code-2" class="cyan"></i> Coding Agent</div>
+              <div class="node-wave cyan"></div>
+            </div>
+            <div class="swarm-node active" id="swarm-node-research">
+              <div class="node-head"><i data-lucide="search" class="green"></i> Research Agent</div>
+              <div class="node-wave green"></div>
+            </div>
+            <div class="swarm-node active" id="swarm-node-devops">
+              <div class="node-head"><i data-lucide="shield-check" class="purple"></i> DevSecOps</div>
+              <div class="node-wave purple"></div>
+            </div>
+            <div class="swarm-node active" id="swarm-node-memory">
+              <div class="node-head"><i data-lucide="database" class="amber"></i> Memory &amp; RAG</div>
+              <div class="node-wave amber"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Dynamic Contextual Panel Card (Command Center Submodules, Memory, Tools, Tasks, Telephony) -->
+        <div class="hud-card dynamic-panel-card" id="right-panel-card" style="display: none; flex: 1; min-height: 0; flex-direction: column; overflow: hidden;">
+          <div class="card-header" style="flex-shrink: 0;">
+            <div class="card-title" id="right-panel-title">
+              <i data-lucide="layout-dashboard"></i> COMMAND CENTER
+            </div>
+            <span class="badge-tag emerald" id="right-panel-badge">SYSTEM OVERVIEW</span>
+          </div>
+          <div class="repos-scroll-list" id="right-panel-content" style="flex: 1; min-height: 0; overflow-y: auto; padding: 10px;">
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Bottom Floating Dock: Environmental Telemetry + Hero TALK TO GENISUS Capsule -->
+    <footer class="hud-floating-dock">
+      <!-- Left: Ambient Telemetry -->
+      <div class="dock-left-telemetry">
+        <div class="telemetry-pill">
+          <i data-lucide="map-pin" class="telemetry-icon"></i>
+          <span id="dock-location-label">Chennai, India</span>
+        </div>
+        <div class="telemetry-pill">
+          <i data-lucide="cloud-sun" class="telemetry-icon" id="dock-weather-icon"></i>
+          <span id="dock-weather-label">33.1°C Clear</span>
+        </div>
+        <div class="telemetry-pill">
+          <i data-lucide="wifi" class="telemetry-icon green" id="dock-network-icon"></i>
+          <span id="dock-network-label">Network: <strong id="dock-latency-ms">18ms</strong></span>
+        </div>
+      </div>
+
+      <!-- Center: Hero Glowing TALK TO GENISUS Capsule -->
+      <div class="dock-hero-capsule-container">
+        <!-- Flanking Mini Audio Wave Left -->
+        <div class="capsule-flank-wave" id="capsule-wave-left">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+
+        <button class="hero-talk-jarvis-capsule" id="hero-talk-btn">
+          <div class="capsule-mic-icon">
+            <i data-lucide="mic" id="hero-mic-icon"></i>
+          </div>
+          <div class="capsule-text-col">
+            <span class="capsule-title">TALK TO GENISUS</span>
+            <span class="capsule-status" id="hero-capsule-status">I am listening...</span>
+          </div>
+        </button>
+
+        <!-- Flanking Mini Audio Wave Right -->
+        <div class="capsule-flank-wave" id="capsule-wave-right">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Right: Text Command Bar & Executive Briefing Button -->
+      <div class="dock-right-actions">
+        <div class="dock-input-wrap">
+          <input 
+            type="text" 
+            id="command-input" 
+            class="dock-input-field" 
+            placeholder="Command GENISUS or press Space to talk..."
+            autocomplete="off"
+          />
+        </div>
+
+        <button class="executive-briefing-btn" id="btn-executive-briefing" title="Generate Executive Briefing Report">
+          <i data-lucide="file-text"></i>
+          <span>Executive Briefing</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Universal Product Intelligence & 3D Hologram Modal -->
+  <div class="hud-modal-backdrop" id="product-modal">
+    <div class="hud-modal-window">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i data-lucide="scan" style="display: inline; vertical-align: middle; margin-right: 6px;"></i>
+          UNIVERSAL PRODUCT INTELLIGENCE &amp; 3D HOLOGRAM
+        </div>
+        <button class="modal-close-btn" id="close-modal-btn">&times;</button>
+      </div>
+
+      <div class="modal-content-grid">
+        <!-- Optical Vision Stage -->
+        <div class="modal-vision-stage">
+          <div class="camera-preview-container">
+            <video id="camera-video" autoplay playsinline muted></video>
+            <div class="camera-hud-reticle"></div>
+            <div class="scanning-laser-line"></div>
+            <div style="position: absolute; bottom: 12px; left: 16px; font-family: var(--font-tech); font-size: 11px; color: var(--cyan); background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 4px;">
+              OCR &amp; BARCODE SCANNER: ACTIVE
+            </div>
+          </div>
+          
+          <div style="margin-top: 14px; display: flex; gap: 10px;">
+            <button class="btn-primary" id="trigger-scan-laptop">Scan MacBook Pro</button>
+            <button class="btn-primary" id="trigger-scan-phone">Scan Pixel 9 Pro</button>
+            <button class="btn-primary" id="trigger-scan-watch">Scan Apple Watch</button>
+          </div>
+        </div>
+
+        <!-- 3D Holographic Rendering Stage & Specs -->
+        <div class="modal-3d-hologram-stage">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-family: var(--font-display); font-size: 13px; color: var(--cyan);">3D HOLOGRAPHIC RECONSTRUCTION</span>
+            <div style="display: flex; gap: 8px;">
+              <button class="prompt-chip" id="holo-wireframe-toggle">Toggle Wireframe</button>
+              <button class="prompt-chip" id="holo-explode-toggle">Exploded View</button>
+            </div>
+          </div>
+
+          <canvas id="product-hologram-canvas"></canvas>
+
+          <div id="product-spec-readout" style="margin-top: 16px; font-size: 13px; line-height: 1.6;">
+            <!-- Specs inserted dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Holographic Phone Call HUD Modal -->
+  <div class="call-modal-backdrop" id="call-modal">
+    <div class="call-card-window">
+      <div class="call-avatar-pulse" id="call-avatar">👵</div>
+      <h2 class="call-contact-name" id="call-contact-name">அம்மா (Amma)</h2>
+      <div class="call-phone-number" id="call-phone-number">+91 98401 23456</div>
+      <div class="call-status-badge" id="call-status-badge">🟢 அழைப்பு விடுக்கப்படுகிறது (Calling...)</div>
+
+      <div class="call-actions-row">
+        <button class="btn-end-call" id="btn-end-call">அழைப்பை முடி (End Call)</button>
+        <a class="btn-native-dial" id="btn-native-dial" href="tel:+919840123456">நேரடி அழைப்பு</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual Code Diff & Changes Review Modal -->
+  <div class="hud-modal-backdrop" id="dev-diff-modal">
+    <div class="hud-modal-window dev-modal-window">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i data-lucide="file-diff" style="display: inline; vertical-align: middle; margin-right: 6px;"></i>
+          GENISUS VISUAL CODE DIFF INSPECTOR · <span id="diff-branch-name" style="color: var(--cyan);">feature/product-ai-scanner</span>
+        </div>
+        <button class="modal-close-btn" id="close-diff-modal-btn">&times;</button>
+      </div>
+
+      <div class="dev-diff-body">
+        <!-- File selector tabs -->
+        <div class="diff-file-tabs" id="diff-file-tabs">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Diff content box -->
+        <div class="diff-code-viewport" id="diff-code-viewport">
+          <!-- Diff lines inserted dynamically -->
+        </div>
+
+        <!-- User Feedback input loop -->
+        <div class="diff-feedback-bar">
+          <div style="font-family: var(--font-tech); font-size: 11.5px; color: var(--text-muted); margin-bottom: 4px;">
+            USER FEEDBACK LOOP (e.g. "Don't use Redis for this. Use local cache." or "The UI should be more futuristic.")
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="diff-feedback-input" class="hud-text-input" placeholder="Enter refinement instructions for GENISUS..." />
+            <button class="btn-dev-action" id="btn-submit-feedback">
+              <i data-lucide="refresh-cw"></i> UPDATE
+            </button>
+            <button class="btn-dev-action primary" id="btn-diff-approve-push">
+              <i data-lucide="check"></i> APPROVE &amp; PUSH
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Strict Confirmation Gate Modal: Zero Silent Actions -->
+  <div class="hud-modal-backdrop" id="dev-confirm-modal">
+    <div class="hud-modal-window confirm-modal-window">
+      <div class="modal-header confirm-header">
+        <div class="modal-title" style="color: var(--amber);">
+          <i data-lucide="shield-alert" style="display: inline; vertical-align: middle; margin-right: 6px;"></i>
+          CONFIRMATION GATE · GITHUB PUSH DIRECTIVE
+        </div>
+        <button class="modal-close-btn" id="close-confirm-modal-btn">&times;</button>
+      </div>
+
+      <div class="confirm-modal-body">
+        <div class="confirm-alert-box">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 4px;">
+            🛡️ Zero Silent Actions Enforced
+          </div>
+          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+            Implementation completed. Tests passed. Changes are ready. In accordance with Section 8 Safety Protocols, explicit operator confirmation is required prior to git commit and pushing to remote repository.
+          </div>
+        </div>
+
+        <div class="confirm-details-card">
+          <div class="confirm-row">
+            <span class="confirm-label">Target Repository:</span>
+            <span class="confirm-val" id="confirm-repo-name">sathishkhan27/PingZo-Customer-Mobile-App</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">Branch:</span>
+            <span class="confirm-val" id="confirm-branch-name" style="color: var(--cyan);">feature/product-ai-scanner</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">Commit Message:</span>
+            <span class="confirm-val" id="confirm-commit-preview" style="font-family: monospace; font-size: 11.5px; color: #a5f3fc;">feat(scanner): add high-speed image preprocessing and local product cache</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">Automated Tests:</span>
+            <span class="confirm-val" style="color: var(--emerald);">✓ 5 of 5 passed (0 warnings)</span>
+          </div>
+        </div>
+
+        <div class="confirm-actions-row">
+          <button class="btn-dev-action confirm-push-btn" id="btn-gate-confirm-push">
+            <i data-lucide="check-circle-2"></i> CONFIRM GITHUB PUSH
+          </button>
+          <button class="btn-dev-action" id="btn-gate-review-again">
+            <i data-lucide="eye"></i> REVIEW AGAIN
+          </button>
+          <button class="btn-dev-action cancel" id="btn-gate-cancel">
+            <i data-lucide="x"></i> CANCEL
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-Time Autonomous Development Pipeline Modal -->
+  <div class="hud-modal-backdrop" id="dev-autopilot-modal">
+    <div class="hud-modal-window" style="max-width: 620px; border-color: rgba(239, 68, 68, 0.4);">
+      <div class="modal-header" style="background: rgba(239, 68, 68, 0.08); border-bottom: 1px solid rgba(239, 68, 68, 0.2);">
+        <div class="modal-title" style="color: #f87171;">
+          <i data-lucide="zap" style="display: inline; vertical-align: middle; margin-right: 6px;"></i>
+          ⚡ REAL-TIME AUTONOMOUS PIPELINE (ASTRA &amp; JARVIS)
+        </div>
+        <button class="modal-close-btn" id="close-autopilot-modal-btn">&times;</button>
+      </div>
+
+      <div style="padding: 18px 20px;">
+        <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 14px;">
+          Direct Python AI Agent execution on your local repository working tree. Fully automates: 
+          <strong style="color: #fff;">Plan ➔ Real Code Changes ➔ Real Build &amp; Tests ➔ Git Commit ➔ Remote Push to GitHub</strong>.
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-family: var(--font-tech); font-size: 11px; color: var(--cyan); margin-bottom: 6px; letter-spacing: 0.5px;">
+            DEVELOPMENT DIRECTIVE / REQUIREMENT
+          </label>
+          <input type="text" id="autopilot-req-input" class="hud-text-input" style="width: 100%; padding: 8px 12px; font-size: 13px;" placeholder="e.g. Add real-time telemetry ping utility or optimize order processing" value="Add real-time telemetry health ping module and self-healing tests" />
+        </div>
+
+        <!-- Presets -->
+        <div style="margin-bottom: 14px;">
+          <div style="font-family: var(--font-tech); font-size: 10.5px; color: var(--text-muted); margin-bottom: 6px;">QUICK PRESETS:</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <button class="prompt-chip" style="font-size: 11px; padding: 4px 8px;" data-pilot="Add real-time telemetry health ping module">📡 Telemetry Ping</button>
+            <button class="prompt-chip" style="font-size: 11px; padding: 4px 8px;" data-pilot="Optimize order processing and local caching">⚡ Local Cache</button>
+            <button class="prompt-chip" style="font-size: 11px; padding: 4px 8px;" data-pilot="Add automated test suite and error logger">🧪 Test Suite &amp; Logger</button>
+            <button class="prompt-chip" style="font-size: 11px; padding: 4px 8px;" data-pilot="Fix component memory leak and cleanup listeners">🛡️ Fix Memory Leak</button>
+          </div>
+        </div>
+
+        <!-- Mode Selection -->
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 18px; padding: 10px 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;">
+          <label style="font-family: var(--font-tech); font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" id="autopilot-auto-push-chk" checked style="accent-color: #ef4444;" />
+            <span>Auto-Push to GitHub Origin (Mode C Autonomous)</span>
+          </label>
+          <span style="font-size: 11px; color: var(--text-muted); margin-left: auto;">Target: <strong style="color: var(--cyan);" id="autopilot-target-display">genisus-os</strong></span>
+        </div>
+
+        <!-- Trigger Button -->
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button class="btn-dev-action cancel" id="autopilot-cancel-btn">Abort</button>
+          <button class="btn-dev-action primary" id="autopilot-run-btn" style="background: linear-gradient(135deg, rgba(239,68,68,0.4), rgba(168,85,247,0.4)); border-color: #ef4444; color: #fff; font-weight: 700;">
+            <i data-lucide="zap"></i> LAUNCH FULL AUTO-PILOT
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Writing Assistant & Enhancer Modal -->
+  <div class="hud-modal-backdrop" id="writing-enhancer-modal">
+    <div class="hud-modal-window" style="max-width: 680px; border-color: rgba(168, 85, 247, 0.4);">
+      <div class="modal-header" style="background: rgba(168, 85, 247, 0.08); border-bottom: 1px solid rgba(168, 85, 247, 0.2);">
+        <div class="modal-title" style="color: #c084fc;">
+          <i data-lucide="edit-3" style="display: inline; vertical-align: middle; margin-right: 6px;"></i>
+          ✍️ AI WRITING ASSISTANT &amp; ENHANCER · NLP CORE
+        </div>
+        <button class="modal-close-btn" id="close-writing-modal-btn">&times;</button>
+      </div>
+
+      <div style="padding: 18px 20px;">
+        <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+          Inspired by <strong style="color: #fff;">ForestStudentView/ai-writing-assistant-enhancer</strong>. Real-time grammar polishing, vocabulary elevation, tone shifting, and technical documentation generation.
+        </div>
+
+        <!-- Tone Selection Pills -->
+        <div style="margin-bottom: 12px;">
+          <div style="font-family: var(--font-tech); font-size: 10.5px; color: var(--text-muted); margin-bottom: 6px;">VOICE &amp; TONE MODULATION:</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;" id="writing-tone-group">
+            <button class="prompt-chip active" style="font-size: 11px;" data-tone="JARVIS_FUTURISTIC">🤖 JARVIS Futuristic</button>
+            <button class="prompt-chip" style="font-size: 11px;" data-tone="EXECUTIVE_PROFESSIONAL">💼 Executive Professional</button>
+            <button class="prompt-chip" style="font-size: 11px;" data-tone="ACADEMIC_RESEARCH">🎓 Academic Research</button>
+            <button class="prompt-chip" style="font-size: 11px;" data-tone="TAMIL_LITERARY_MODERN">🇮🇳 Tamil Modern</button>
+            <button class="prompt-chip" style="font-size: 11px;" data-tone="CASUAL_CONVERSATIONAL">💬 Casual Conversational</button>
+          </div>
+        </div>
+
+        <!-- Input Text Box -->
+        <div style="margin-bottom: 12px;">
+          <textarea id="writing-input-text" class="hud-text-input" style="width: 100%; height: 85px; padding: 10px 12px; font-size: 13px; resize: vertical;" placeholder="Type or paste draft content here (e.g. 'we need to make the checkout fast and fix the crash')"></textarea>
+        </div>
+
+        <!-- Enhancement Action Buttons -->
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+          <button class="btn-dev-action" id="btn-we-polish" style="font-size: 11px; padding: 5px 10px;">
+            <i data-lucide="check"></i> Polish Grammar
+          </button>
+          <button class="btn-dev-action" id="btn-we-elevate" style="font-size: 11px; padding: 5px 10px;">
+            <i data-lucide="trending-up"></i> Elevate Vocabulary
+          </button>
+          <button class="btn-dev-action" id="btn-we-jarvis" style="font-size: 11px; padding: 5px 10px;">
+            <i data-lucide="shield"></i> Jarvis Tone
+          </button>
+          <button class="btn-dev-action" id="btn-we-summarize" style="font-size: 11px; padding: 5px 10px;">
+            <i data-lucide="list"></i> Summarize
+          </button>
+          <button class="btn-dev-action" id="btn-we-expand" style="font-size: 11px; padding: 5px 10px;">
+            <i data-lucide="maximize-2"></i> Tech Spec
+          </button>
+          <button class="btn-dev-action" id="btn-we-doc" style="font-size: 11px; padding: 5px 10px;">
+            <i data-lucide="file-text"></i> README / Docs
+          </button>
+        </div>
+
+        <!-- Enhanced Output Box -->
+        <div style="margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-family: var(--font-tech); font-size: 10.5px; color: var(--cyan);">ENHANCED OUTPUT &amp; METRICS:</span>
+            <span class="badge-tag cyan" id="writing-metrics-badge" style="font-size: 10px;">+28% Clarity</span>
+          </div>
+          <div id="writing-output-display" style="min-height: 80px; max-height: 160px; overflow-y: auto; padding: 10px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(168,85,247,0.3); border-radius: 6px; font-size: 12.5px; line-height: 1.5; color: #e9d5ff; white-space: pre-wrap;">Enter text above and choose an enhancement action to generate polished content.</div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <button class="btn-dev-action" id="btn-we-speak" style="font-size: 11px;">
+            <i data-lucide="volume-2"></i> Read Aloud
+          </button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-dev-action" id="btn-we-copy">
+              <i data-lucide="copy"></i> Copy Output
+            </button>
+            <button class="btn-dev-action primary" id="btn-we-use" style="background: linear-gradient(135deg, rgba(168,85,247,0.4), rgba(59,130,246,0.4)); border-color: #a855f7; color: #fff;">
+              <i data-lucide="check-circle-2"></i> Insert into Prompt
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dedicated LLM Task & Activity Orchestrator Modal -->
+  <div class="hud-modal-backdrop" id="llm-task-modal">
+    <div class="hud-modal-window" style="max-width: 680px; border-color: rgba(59, 130, 246, 0.4);">
+      <div class="modal-header" style="background: rgba(59, 130, 246, 0.08); border-bottom: 1px solid rgba(59, 130, 246, 0.2);">
+        <div class="modal-title" style="color: #60a5fa;">
+          <i data-lucide="check-square" style="display: inline; vertical-align: middle; margin-right: 6px;"></i>
+          📋 DEDICATED LLM TASK &amp; ACTIVITY ORCHESTRATOR
+        </div>
+        <button class="modal-close-btn" id="close-llm-task-modal-btn">&times;</button>
+      </div>
+
+      <div style="padding: 18px 20px;">
+        <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+          Autonomous LLM reasoning engine for breaking high-level objectives into sequential multi-agent activities, calculating time estimates, assigning specialized worker agents, and maintaining persistent activity state.
+        </div>
+
+        <!-- Directive Input -->
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-family: var(--font-tech); font-size: 11px; color: var(--cyan); margin-bottom: 6px; letter-spacing: 0.5px;">
+            TASK DIRECTIVE OR HIGH-LEVEL GOAL
+          </label>
+          <input type="text" id="llm-task-input" class="hud-text-input" style="width: 100%; padding: 8px 12px; font-size: 13px;" placeholder="e.g. Launch Pingzo driver tracking MVP or optimize SQL billing queries" value="Deploy Pingzo hyperlocal order fulfillment system with real-time driver tracking" />
+        </div>
+
+        <!-- Priority and Category Filters -->
+        <div style="display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap;">
+          <div>
+            <label style="font-family: var(--font-tech); font-size: 10.5px; color: var(--text-muted); display: block; margin-bottom: 4px;">PRIORITY:</label>
+            <div style="display: flex; gap: 6px;" id="llm-priority-group">
+              <button class="prompt-chip active" style="font-size: 11px;" data-priority="HIGH">🔴 High</button>
+              <button class="prompt-chip" style="font-size: 11px;" data-priority="MEDIUM">🟡 Medium</button>
+              <button class="prompt-chip" style="font-size: 11px;" data-priority="LOW">🟢 Low</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-family: var(--font-tech); font-size: 10.5px; color: var(--text-muted); display: block; margin-bottom: 4px;">CATEGORY:</label>
+            <select id="llm-category-select" class="lang-selector" style="font-size: 11.5px; padding: 5px 8px;">
+              <option value="Engineering" selected>Engineering</option>
+              <option value="Pingzo">Pingzo Hyperlocal</option>
+              <option value="Finance">Finance &amp; Revenue</option>
+              <option value="Content">Content &amp; Docs</option>
+              <option value="Research">Research &amp; Intel</option>
+              <option value="Operations">Operations</option>
+            </select>
+          </div>
+          <div style="margin-left: auto; align-self: flex-end;">
+            <button class="btn-dev-action primary" id="btn-llm-decompose" style="background: linear-gradient(135deg, rgba(59,130,246,0.4), rgba(168,85,247,0.4)); border-color: #3b82f6; color: #fff; font-weight: 700;">
+              <i data-lucide="layers"></i> DECOMPOSE &amp; ORCHESTRATE
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Activities List -->
+        <div style="margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-family: var(--font-tech); font-size: 10.5px; color: var(--cyan);">ORCHESTRATED SUB-ACTIVITIES:</span>
+            <span class="badge-tag cyan" id="llm-task-status-badge" style="font-size: 10px;">STANDBY</span>
+          </div>
+
+          <div id="llm-activities-container" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(59,130,246,0.3); border-radius: 6px;">
+            <div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 20px;">
+              Click "DECOMPOSE &amp; ORCHESTRATE" to generate multi-agent activities.
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <button class="btn-dev-action" id="btn-llm-speak-plan" style="font-size: 11px;">
+            <i data-lucide="volume-2"></i> Read Plan Aloud
+          </button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-dev-action" id="btn-llm-sync-calendar">
+              <i data-lucide="calendar"></i> Sync to Agenda
+            </button>
+            <button class="btn-dev-action primary" id="btn-llm-execute-all" style="background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(6,182,212,0.3)); border-color: #10b981; color: #6ee7b7;">
+              <i data-lucide="play"></i> Execute Active Tasks
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- General Safety Modal Fallback -->
+  <div class="hud-modal-backdrop" id="safety-modal">
+    <div class="hud-modal-window" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="modal-title" style="color: var(--crimson);">
+          <i data-lucide="alert-triangle"></i> SENSITIVE OPERATION
+        </div>
+        <button class="modal-close-btn" id="safety-close-btn">&times;</button>
+      </div>
+      <div style="padding: 16px;">
+        <div id="safety-modal-message" style="font-size: 13px; margin-bottom: 16px; color: #fff;"></div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button class="btn-dev-action cancel" id="safety-cancel-btn">Abort</button>
+          <button class="btn-dev-action primary" id="safety-confirm-btn">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Model & OpenAI Configuration Modal -->
+  <div class="hud-modal-backdrop" id="ai-model-modal">
+    <div class="hud-modal-window" style="max-width: 620px;">
+      <div class="modal-header">
+        <div class="modal-title" style="color: #60a5fa; display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="sparkles"></i> GENISUS AI MODEL & OPENAI CORE CONFIGURATION
+        </div>
+        <button class="modal-close-btn" id="close-ai-model-modal-btn">&times;</button>
+      </div>
+
+      <div style="padding: 20px; max-height: 75vh; overflow-y: auto;">
+        <!-- Engine Selection Radio / Cards -->
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; letter-spacing: 0.5px; margin-bottom: 10px;">
+            PRIMARY REASONING & TASK SOLVER ENGINE:
+          </label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <label class="model-select-card" style="border: 1px solid rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.08); padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px;">
+              <input type="radio" name="ai-engine-choice" value="gpt-6-astra" id="radio-gpt-6-astra" checked style="margin-top: 3px;" />
+              <div>
+                <div style="font-weight: 700; font-size: 13px; color: #60a5fa;">GPT-6 Astra Omni v6.2</div>
+                <div style="font-size: 10px; color: #93c5fd; margin-top: 2px;">🟢 100% Free · Built-in Dual Autonomous Engines (Code, Tasks & Roadmaps)</div>
+              </div>
+            </label>
+
+            <label class="model-select-card" style="border: 1px solid rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08); padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px;">
+              <input type="radio" name="ai-engine-choice" value="gpt-4o-mini" id="radio-gpt-4o-mini" style="margin-top: 3px;" />
+              <div>
+                <div style="font-weight: 700; font-size: 13px; color: #34d399;">OpenAI GPT-4o-mini</div>
+                <div style="font-size: 10px; color: #6ee7b7; margin-top: 2px;">⚡ Ultra-fast & high intelligence · Requires OpenAI API key or Free Tier</div>
+              </div>
+            </label>
+
+            <label class="model-select-card" style="border: 1px solid rgba(168, 85, 247, 0.4); background: rgba(168, 85, 247, 0.08); padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px;">
+              <input type="radio" name="ai-engine-choice" value="gpt-4o" id="radio-gpt-4o" style="margin-top: 3px;" />
+              <div>
+                <div style="font-weight: 700; font-size: 13px; color: #c084fc;">OpenAI GPT-4o Frontier</div>
+                <div style="font-size: 10px; color: #d8b4fe; margin-top: 2px;">🧠 Maximum reasoning & multimodal · Requires OpenAI API key</div>
+              </div>
+            </label>
+
+            <label class="model-select-card" style="border: 1px solid rgba(234, 179, 8, 0.4); background: rgba(234, 179, 8, 0.08); padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px;">
+              <input type="radio" name="ai-engine-choice" value="o3-mini" id="radio-o3-mini" style="margin-top: 3px;" />
+              <div>
+                <div style="font-weight: 700; font-size: 13px; color: #facc15;">OpenAI o3-mini Reasoning</div>
+                <div style="font-size: 10px; color: #fde047; margin-top: 2px;">🔬 Deep multi-step scientific & algorithmic reasoning</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- OpenAI API Key Configuration -->
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; padding: 14px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="font-size: 12px; font-weight: 700; color: #e2e8f0; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="key" style="width: 14px; height: 14px; color: #38bdf8;"></i> OpenAI API Key (Optional for Custom / Frontier Models):
+            </label>
+            <span id="ai-key-status-tag" style="font-size: 10px; color: #94a3b8; padding: 2px 8px; border-radius: 12px; background: rgba(255,255,255,0.05);">Free Mode Active</span>
+          </div>
+
+          <div style="position: relative; margin-bottom: 8px;">
+            <input 
+              type="password" 
+              id="openai-api-key-input" 
+              placeholder="sk-proj-... (Leave empty to use built-in free GPT-6 Astra engine)" 
+              style="width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 6px; padding: 9px 36px 9px 12px; font-size: 12px; color: #fff; font-family: monospace;"
+            />
+            <button id="toggle-key-visibility-btn" type="button" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;">
+              <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
+            </button>
+          </div>
+          <div style="font-size: 10px; color: #64748b; line-height: 1.4;">
+            🔒 Key is stored locally in your browser session or loaded from system environment. Never shared externally.
+          </div>
+        </div>
+
+        <!-- Custom Base URL (e.g. Local Ollama or OpenRouter) -->
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 6px;">
+            API Endpoint Base URL (Default: OpenAI v1):
+          </label>
+          <input 
+            type="text" 
+            id="ai-base-url-input" 
+            placeholder="https://api.openai.com/v1" 
+            value="https://api.openai.com/v1"
+            style="width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #cbd5e1; font-family: monospace;"
+          />
+        </div>
+
+        <!-- Test Query Connection Output Box -->
+        <div id="ai-test-output-box" style="display: none; background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 12px; color: #93c5fd; max-height: 120px; overflow-y: auto;">
+        </div>
+
+        <!-- Footer Actions -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(148, 163, 184, 0.2); padding-top: 16px;">
+          <button class="btn-dev-action" id="btn-test-ai-connection" style="background: rgba(59, 130, 246, 0.15); border: 1px solid #3b82f6; color: #93c5fd;">
+            <i data-lucide="zap"></i> Test Connection
+          </button>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-dev-action cancel" id="btn-close-ai-model-modal">Cancel</button>
+            <button class="btn-dev-action primary" id="btn-save-ai-model-settings" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-color: #60a5fa;">
+              <i data-lucide="check"></i> Save & Apply Model
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

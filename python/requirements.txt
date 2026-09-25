@@ -1,0 +1,5 @@
+# GENISUS Python AI Agent Subsystem Dependencies
+# Zero mandatory external dependencies required (runs purely on Python standard library)
+# Optional enhancements:
+# openai>=1.0.0
+# requests>=2.31.0
